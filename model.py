@@ -2,23 +2,25 @@ import torch
 import torch.nn as nn
 import data_handling
 import learning
+
 pairs = [
-    ("Dov'e la papera di gomma ?", "Where is the rubber duck ?"),
-    ("Chi vi ha dato quella chitarra ?", "Who gave you that guitar ?"),
-    ("Chi ti ha dato quel libro ?", "Who gave you that book ?"),
-    ("Perche sei vegetariano ?", "Why are you a vegetarian ?"),
-    ("Il suo discorso e stato splendido .", "Your speech was splendid ."),
-    ("Tu riesci a catturare il pollo ?", "Can you catch the chicken ?"),
-    ("Dove posso trovare un ristorante ?", "Where can I find a restaurant ?"),
-    ("Mi puoi aiutare con i compiti ?", "Can you help me with my homework ?"),
-    ("Quanto costa questo libro ?", "How much does this book cost ?"),
-    ("Che ore sono adesso ?", "What time is it now ?"),
-    ("Posso avere un bicchiere d'acqua ?", "Can I have a glass of water ?"),
-    ("Hai visto il mio gatto ?", "Have you seen my cat ?"),
-    ("Voglio imparare a suonare la chitarra .", "I want to learn to play the guitar ."),
-    ("Dove si trova la stazione ferroviaria ?", "Where is the train station ?"),
-    ("Come si chiama il tuo amico ?", "What is your friend's name ?")
+    ("Dov'e la papera ?", "Where is the duck ?"),
+    ("Dov'e la stazione ?", "Where is the station ?"),
+    ("Dov'e il ristorante ?", "Where is the restaurant ?"),
+    ("Chi ti ha dato il libro ?", "Who gave you the book ?"),
+    ("Chi ti ha dato la chitarra ?", "Who gave you the guitar ?"),
+    ("Perche sei vegetariano ?", "Why are you vegetarian ?"),
+    ("Puoi catturare il pollo ?", "Can you catch the chicken ?"),
+    ("Puoi aiutarmi ?", "Can you help me ?"),
+    ("Quanto costa il libro ?", "How much does the book cost ?"),
+    ("Posso avere acqua ?", "Can I have water ?"),
+    ("Hai visto il gatto ?", "Have you seen the cat ?"),
+    ("Voglio imparare la chitarra .", "I want to learn the guitar ."),
+    ("Il discorso e stato bello .", "The speech was nice ."),
+    ("Come si chiama l'amico ?", "What is the friend's name ?"),
+    ("Dov'e il lago ?", "Where is the lake ?")
 ]
+
 
 
 vocab = data_handling.build_vocab(pairs)
@@ -70,7 +72,7 @@ def predict(sentence,myModel):
 
     return pairs[predicted_class][1]
 
-training_model = learning.train(training_model,inputs, targets_one_hot, 10, 0.1, 100, 100, 100)
+training_model = learning.train(training_model,inputs, targets_one_hot, 700, 0.9)
 
 torch.save(training_model.state_dict(), "microtranslator.pth")
 training_model.load_state_dict(torch.load("microtranslator.pth"))
@@ -81,6 +83,8 @@ while True:
 
     if sentence.lower() == "quit":
         break
-
-    print("Untrained:", predict(sentence, untrained_model))
-    print("Trained:", predict(sentence, training_model))
+    elif sentence.lower().split()[0] in vocab:
+        print("Untrained:", predict(sentence, untrained_model))
+        print("Trained:", predict(sentence, training_model))
+    else:
+        print("Word not in vocab:", sentence)
