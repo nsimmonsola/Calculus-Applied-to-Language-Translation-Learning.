@@ -70,7 +70,7 @@ def predict(sentence,myModel):
 
     return pairs[predicted_class][1]
 
-training_model = learning.train(training_model,inputs, targets_one_hot, 10, 0.1, 100, 100, 100)
+training_model = learning.train(training_model,inputs, targets_one_hot, 10, 0.9)
 
 torch.save(training_model.state_dict(), "microtranslator.pth")
 training_model.load_state_dict(torch.load("microtranslator.pth"))
@@ -81,6 +81,10 @@ while True:
 
     if sentence.lower() == "quit":
         break
+    elif sentence.lower().split()[0] in vocab:
+        print("Untrained:", predict(sentence, untrained_model))
+        print("Trained:", predict(sentence, training_model))
 
-    print("Untrained:", predict(sentence, untrained_model))
-    print("Trained:", predict(sentence, training_model))
+    else:
+        print("Phrase not in vocab:", sentence)
+

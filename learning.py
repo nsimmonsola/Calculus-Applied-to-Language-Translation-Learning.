@@ -5,7 +5,7 @@ def softmax(x):
     e_x = torch.exp(x - torch.max(x))
     return e_x / e_x.sum()
 
-def train(model, inputs, targets, epochs, rate_learning, embedding, weights, biases):
+def train(model, inputs, targets, epochs, rate_learning):
     for i in range(epochs):
         # Print and update
         outputs = model(inputs)
