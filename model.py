@@ -3,21 +3,14 @@ import torch.nn as nn
 import data_handling
 import learning
 pairs = [
-    ("Dov'e la papera di gomma ?", "Where is the rubber duck ?"),
-    ("Chi vi ha dato quella chitarra ?", "Who gave you that guitar ?"),
-    ("Chi ti ha dato quel libro ?", "Who gave you that book ?"),
+    ("Dov'e la papera ?", "Where is the duck ?"),
+    ("Come si chiama il gatto ?", "What is the name of the cat ?"),
+    ("Puoi aiutarmi catture il pollo ?", "Can you help me catch the chicken ?"),
     ("Perche sei vegetariano ?", "Why are you a vegetarian ?"),
-    ("Il suo discorso e stato splendido .", "Your speech was splendid ."),
-    ("Tu riesci a catturare il pollo ?", "Can you catch the chicken ?"),
-    ("Dove posso trovare un ristorante ?", "Where can I find a restaurant ?"),
-    ("Mi puoi aiutare con i compiti ?", "Can you help me with my homework ?"),
-    ("Quanto costa questo libro ?", "How much does this book cost ?"),
-    ("Che ore sono adesso ?", "What time is it now ?"),
-    ("Posso avere un bicchiere d'acqua ?", "Can I have a glass of water ?"),
-    ("Hai visto il mio gatto ?", "Have you seen my cat ?"),
-    ("Voglio imparare a suonare la chitarra .", "I want to learn to play the guitar ."),
-    ("Dove si trova la stazione ferroviaria ?", "Where is the train station ?"),
-    ("Come si chiama il tuo amico ?", "What is your friend's name ?")
+    ("Il suo discorso e stato bello .", "Your speech was splendid ."),
+    ("Hai visto il duomo","Have you seen the Duomo/Church"),
+    ("Hai visto il gatto ?", "Have you seen cat ?"),
+    ("Dov'e il lago ?", "Where is the lake ?")
 ]
 
 
@@ -70,21 +63,28 @@ def predict(sentence,myModel):
 
     return pairs[predicted_class][1]
 
-training_model = learning.train(training_model,inputs, targets_one_hot, 10, 0.9)
+training_model = learning.train(training_model,inputs, targets_one_hot, 7, 0.9)
 
 torch.save(training_model.state_dict(), "microtranslator.pth")
 training_model.load_state_dict(torch.load("microtranslator.pth"))
 outputs = training_model(inputs)
+
+good_sentence = True
 
 while True:
     sentence = input("Italian: ")
 
     if sentence.lower() == "quit":
         break
-    elif sentence.lower().split()[0] in vocab:
-        print("Untrained:", predict(sentence, untrained_model))
-        print("Trained:", predict(sentence, training_model))
-
     else:
-        print("Phrase not in vocab:", sentence)
-
+        for i in range(len(sentence.split())):
+           if sentence.lower().split()[i] not in vocab:
+               good_sentence = False
+               print("Phrase not in vocab:", sentence.lower().split()[i])
+               break
+           else:
+               good_sentence = True
+        print(good_sentence)
+        if good_sentence == True:
+            print("Untrained:", predict(sentence, untrained_model))
+            print("Trained:", predict(sentence, training_model))
